@@ -67,7 +67,7 @@
 
     <script>
         // Fetching JSON data from GitHub Pages
-        fetch('https://github.com/the-shepard/lazyguide/blob/main/data.json')
+        fetch('data.json')
             .then(response => response.json())
             .then(data => {
                 const localAuthoritySelect = document.getElementById('localAuthority');
