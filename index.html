@@ -47,7 +47,6 @@
     <h1>LazyGuide - A financial guidance tool for young adults in London by Sharif Ahmed</h1>
     <select id="localAuthority">
         <option selected disabled>Choose Local Authority</option>
-        <!-- Local authorities options will be populated here -->
     </select>
     <select id="accommodationType">
         <option selected disabled>Choose Accommodation Type</option>
@@ -66,7 +65,6 @@
     <div id="results"></div>
 
     <script>
-        // Fetching JSON data from GitHub Pages
         fetch('data.json')
             .then(response => response.json())
             .then(data => {
@@ -80,11 +78,10 @@
                     }
                 });
 
-                // Event listener for the submit button
                 document.getElementById('submitButton').addEventListener('click', function() {
                     const localAuthority = document.getElementById('localAuthority').value;
                     const accommodationType = document.getElementById('accommodationType').value;
-                    const rentInput = parseFloat(document.getElementById('rent').value); // Ensure input is treated as a number
+                    const rentInput = parseFloat(document.getElementById('rent').value);
 
                     let accommodationKey = accommodationType.replace(" ", "");
                     if(accommodationType === "One Bedroom") accommodationKey = "One Bedroom";
