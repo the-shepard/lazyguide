@@ -69,6 +69,9 @@
     <p>Question 3:</p>
     <p>How much do you spend on transport each month? (£)</p>
     <input type="number" id="transport" name="transport">
+    <p>Question 4:</p>
+    <p>What are all your other costs each month? (£)</p>
+    <input type="number" id="otherCosts" name="otherCosts">
     <button type="button" id="submitButton">Submit</button>
     <div id="results"></div>
 
@@ -92,6 +95,7 @@
                     const rentInput = parseFloat(document.getElementById('rent').value);
                     const groceriesInput = parseFloat(document.getElementById('groceries').value);
                     const transportInput = parseFloat(document.getElementById('transport').value);
+                    const otherCostsInput = parseFloat(document.getElementById('otherCosts').value);
 
                     let accommodationKey = accommodationType.replace(" ", "");
                     if(accommodationType === "One Bedroom") accommodationKey = "One Bedroom";
@@ -125,6 +129,8 @@
                     let statusClassTransport = differenceTransport > 0 ? 'plus' : 'minus';
                     let prefixTransport = differenceTransport > 0 ? '+' : '-';
                     document.getElementById('results').innerHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
+
+                    document.getElementById('results').innerHTML += `<br>Your other costs are £${otherCostsInput}.`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
