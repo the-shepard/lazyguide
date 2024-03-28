@@ -160,10 +160,9 @@
                     }
                     document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
 
-                    // Provide feedback based on the user input
-                    const allNegative = (difference <= 0) && (differenceGroceries <= 0) && (differenceTransport <= 0);
-                    if (allNegative && remainingIncomeColor === 'green') {
-                        document.getElementById('results').innerHTML += `<br>Based on the supplied figures, your budget is in check. Your costs are less than your income, and you have at least 10% of income saved.`;
+                    // Feedback based on the supplied figures
+                    if (difference < 0 && differenceGroceries < 0 && differenceTransport < 0 && incomePercentage > 10) {
+                        document.getElementById('results').innerHTML += "<br>Based on the supplied figures, your budget is in check. Your costs are less than your income and you have at least 10% of income saved.";
                     }
                 });
             })
