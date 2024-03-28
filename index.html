@@ -45,6 +45,9 @@
 </head>
 <body>
     <h1>LazyGuide - A financial guidance tool for young adults in London by Sharif Ahmed</h1>
+    <p>Question 0:</p>
+    <p>What is your total monthly income? (£) (including student loans)</p>
+    <input type="number" id="totalIncome" name="totalIncome">
     <p>Question 1:</p> 
     <p>Please choose your Local Authority and Accommodation Type:</p>
     <select id="localAuthority">
@@ -90,6 +93,7 @@
                 });
 
                 document.getElementById('submitButton').addEventListener('click', function() {
+                    const totalIncome = parseFloat(document.getElementById('totalIncome').value);
                     const localAuthority = document.getElementById('localAuthority').value;
                     const accommodationType = document.getElementById('accommodationType').value;
                     const rentInput = parseFloat(document.getElementById('rent').value);
@@ -134,6 +138,9 @@
 
                     const totalMonthlySpending = rentInput + groceriesInput + transportInput + otherCostsInput;
                     document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
+
+                    const remainingIncome = totalIncome - totalMonthlySpending;
+                    document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is £${remainingIncome.toFixed(2)}.`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
