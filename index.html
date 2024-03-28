@@ -172,7 +172,12 @@
                     if (budgetInCheck) {
                         feedbackMessage = 'Based on the supplied figures, your budget is in check. Your costs are less than your income, and you have at least 10% of your income saved.';
                     } else {
-                        feedbackMessage = 'It looks like your expenses might be putting your budget at risk. Consider reviewing your spending or finding ways to increase your income.';
+                        feedbackMessage = 'It looks like your expenses might be putting your budget at risk. The calculator highlights the strong and weak points within your budget.';
+                        feedbackMessage += '<br>If all of your costs are within the average market reference values, then you will need to find a way to increase your income.';
+                        feedbackMessage += '<br>If transport costs are high, then it is important to highlight that they will vary massively based on the individual. For some, opting for a car could, in fact, be cheaper than only using public transport.';
+                        feedbackMessage += '<br>If grocery prices are high, then consider discounters such as Aldi or Lidl, which have statistics backing proving significant savings to consumers.';
+                        feedbackMessage += '<br>If accommodation expenditure is high, then consider finding a property to share with a friend, moving to a cheaper area, downsizing, or living in HMOs.';
+                        feedbackMessage += '<br>If the mentioned costs are all in check and other costs are high, this could indicate a niche issue which means you will have to investigate what, in particular, you are spending on.';
                     }
                     document.getElementById('results').innerHTML += `<br><br>${feedbackMessage}`;
                 });
