@@ -17,7 +17,8 @@
         .question {
             margin-bottom: 20px;
         }
-        input[type="number"], select {
+        input[type="number"],
+        select {
             width: 20%;
             padding: 10px;
             margin-top: 5px;
@@ -57,7 +58,7 @@
     <p>Sources: Office of National Statistics, Transport for London, HousingAnywhere</p>
     <p>All Data used is the lastest available</p>
     <p>Question 0:</p>
-    <p>What is your total monthly income?(£)(including student loans)</p>
+    <p>What is your total monthly income? (£) (including student loans)</p>
     <input type="number" id="totalIncome" name="totalIncome">
     <p>Question 1:</p> 
     <p>Please choose your Local Authority and Accommodation Type:</p>
@@ -88,7 +89,6 @@
     <input type="number" id="otherCosts" name="otherCosts">
     <button type="button" id="submitButton">Submit</button>
     <div id="results"></div>
-
     <script>
         fetch('data.json')
             .then(response => response.json())
@@ -103,7 +103,8 @@
                     }
                 });
 
-                document.getElementById('submitButton').addEventListener('click', function() {
+                const submitButton = document.getElementById('submitButton');
+                submitButton.addEventListener('click', () => {
                     const totalIncome = parseFloat(document.getElementById('totalIncome').value);
                     const localAuthority = document.getElementById('localAuthority').value;
                     const accommodationType = document.getElementById('accommodationType').value;
@@ -131,51 +132,71 @@
                     }
 
                     const selectedData = data.find(dataItem => dataItem.Area === localAuthority);
+                    let feedbackMessage = '';
                     let budgetInCheck = true;
-                    let resultsHTML = '';
 
                     if(selectedData && selectedData[accommodationKey] !== undefined && selectedData[accommodationKey] !== ".") {
                         const referenceRent = parseFloat(selectedData[accommodationKey]);
+
                         const difference = rentInput - referenceRent;
                         const percentageDifference = ((difference / referenceRent) * 100).toFixed(2);
-
                         let statusClass = difference > 0 ? 'plus' : 'minus';
                         let prefix = difference > 0 ? '+' : '-';
                         if (difference > 0) budgetInCheck = false;
-                        resultsHTML += `Your spending on rent is <span class="${statusClass}">${prefix}${Math.abs(percentageDifference)}%</span> compared to the reference amount of £${referenceRent}.`;
+                        document.getElementById('results').innerHTML = `Your spending on rent is <span class="${statusClass}">${prefix}${Math.abs(percentageDifference)}%</span> compared to the reference amount of £${referenceRent}.`;
                     } else {
-                        resultsHTML += `Reference amount not available for the selected options.`;
+                        document.getElementById('results').innerHTML = `Reference amount not available for the selected options.`;
                         budgetInCheck = false;
                     }
 
-                 
-                    const referenceGroceries = 235; 
+                    const referenceGroceries = 235; // Reference amount for groceries
                     const differenceGroceries = groceriesInput - referenceGroceries;
                     if (differenceGroceries > 0) budgetInCheck = false;
                     const percentageDifferenceGroceries = ((differenceGroceries / referenceGroceries) * 100).toFixed(2);
 
                     let statusClassGroceries = differenceGroceries > 0 ? 'plus' : 'minus';
                     let prefixGroceries = differenceGroceries > 0 ? '+' : '-';
-                    resultsHTML += `<br>Your spending on groceries is <span class="${statusClassGroceries}">${prefixGroceries}${Math.abs(percentageDifferenceGroceries)}%</span> compared to the reference amount of £${referenceGroceries}.`;
+                    document.getElementById('results').innerHTML += `<br>Your spending on groceries is <span class="${statusClassGroceries}">${prefixGroceries}${Math.abs(percentageDifferenceGroceries)}%</span> compared to the reference amount of £${referenceGroceries}.`;
 
-                    const referenceTransport = 265.5;
+                    const referenceTransport = 265.5; // Reference amount for transport
                     const differenceTransport = transportInput - referenceTransport;
                     if (differenceTransport > 0) budgetInCheck = false;
                     const percentageDifferenceTransport = ((differenceTransport / referenceTransport) * 100).toFixed(2);
 
                     let statusClassTransport = differenceTransport > 0 ? 'plus' : 'minus';
                     let prefixTransport = differenceTransport > 0 ? '+' : '-';
-                    resultsHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
+                    document.getElementById('results').innerHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
 
-                    resultsHTML += `<br>Your other costs are £${otherCostsInput}.`;
+                    document.getElementById('results').innerHTML += `<br>Your other costs are £${otherCostsInput}.`;
 
                     const totalMonthlySpending = rentInput + groceriesInput + transportInput + otherCostsInput;
                     const remainingIncome = totalIncome - totalMonthlySpending;
-                    let remainingIncomeColor = remainingIncome >= 0 ? 'green' : 'red';
-                    resultsHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
-                    resultsHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
+                    let remainingIncomeColor;
+                    const incomePercentage = ((remainingIncome / totalIncome) * 100).toFixed(2);
+                    if (incomePercentage < 0) {
+                        remainingIncomeColor = 'red';
+                        budgetInCheck = false;
+                    } else if (incomePercentage <= 10) {
+                        remainingIncomeColor = 'orange';
+                        budgetInCheck = false;
+                    } else {
+                        remainingIncomeColor = 'green';
+                    }
+                    document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
+                    document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
 
-                    document.getElementById('results').innerHTML = resultsHTML;
+                    // Adding the budget feedback based on user's inputs
+                    if (budgetInCheck) {
+                        feedbackMessage = 'Based on the supplied figures, your budget is in check. Your costs are less than your income, and you have at least 10% of your income saved.';
+                    } else {
+                        feedbackMessage = 'It looks like your expenses might be putting your budget at risk. The calculator highlights the strong and weak points within your budget.';
+                        feedbackMessage += '<br>If all of your costs are within the average market reference values, then you will need to find a way to increase your income.';
+                        feedbackMessage += '<br>If transport costs are high, then it is important to highlight that they will vary massively based on the individual. For some, opting for a car could, in fact, be cheaper than only using public transport.';
+                        feedbackMessage += '<br>If grocery prices are high, then consider discounters such as Aldi or Lidl, which have statistics backing proving significant savings to consumers.';
+                        feedbackMessage += '<br>If accommodation expenditure is high, then consider finding a property to share with a friend, living with parents, moving to a cheaper area, downsizing, or living in HMOs.';
+                        feedbackMessage += '<br>If the mentioned costs are all in check and other costs are high, this could indicate a niche issue which means you will have to investigate what, in particular, you are spending on.';
+                    }
+                    document.getElementById('results').innerHTML += `<br><br>${feedbackMessage}`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
