@@ -66,6 +66,9 @@
     <p>Question 2:</p>
     <p>How much do you spend on groceries each month? (£)</p>
     <input type="number" id="groceries" name="groceries">
+    <p>Question 3:</p>
+    <p>How much do you spend on transport each month? (£)</p>
+    <input type="number" id="transport" name="transport">
     <button type="button" id="submitButton">Submit</button>
     <div id="results"></div>
 
@@ -88,6 +91,7 @@
                     const accommodationType = document.getElementById('accommodationType').value;
                     const rentInput = parseFloat(document.getElementById('rent').value);
                     const groceriesInput = parseFloat(document.getElementById('groceries').value);
+                    const transportInput = parseFloat(document.getElementById('transport').value);
 
                     let accommodationKey = accommodationType.replace(" ", "");
                     if(accommodationType === "One Bedroom") accommodationKey = "One Bedroom";
@@ -113,6 +117,14 @@
                     let statusClassGroceries = differenceGroceries > 0 ? 'plus' : 'minus';
                     let prefixGroceries = differenceGroceries > 0 ? '+' : '-';
                     document.getElementById('results').innerHTML += `<br>Your spending on groceries is <span class="${statusClassGroceries}">${prefixGroceries}${Math.abs(percentageDifferenceGroceries)}%</span> compared to the reference amount of £${referenceGroceries}.`;
+
+                    const referenceTransport = 265.5; // Reference amount for transport
+                    const differenceTransport = transportInput - referenceTransport;
+                    const percentageDifferenceTransport = ((differenceTransport / referenceTransport) * 100).toFixed(2);
+
+                    let statusClassTransport = differenceTransport > 0 ? 'plus' : 'minus';
+                    let prefixTransport = differenceTransport > 0 ? '+' : '-';
+                    document.getElementById('results').innerHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
