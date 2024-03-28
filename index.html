@@ -88,80 +88,86 @@
     <div id="results"></div>
 
     <script>
-        fetch('data.json')
-            .then(response => response.json())
-            .then(data => {
-                const localAuthoritySelect = document.getElementById('localAuthority');
-                data.forEach(data => {
-                    if(data.Area && data.Area !== "Inner London" && data.Area !== "Outer London") {
-                        const option = document.createElement('option');
-                        option.value = data.Area;
-                        option.textContent = data.Area;
-                        localAuthoritySelect.appendChild(option);
-                    }
-                });
+    fetch('data.json')
+        .then(response => response.json())
+        .then(data => {
+            const localAuthoritySelect = document.getElementById('localAuthority');
+            data.forEach(data => {
+                if(data.Area && data.Area !== "Inner London" && data.Area !== "Outer London") {
+                    const option = document.createElement('option');
+                    option.value = data.Area;
+                    option.textContent = data.Area;
+                    localAuthoritySelect.appendChild(option);
+                }
+            });
 
-                document.getElementById('submitButton').addEventListener('click', function() {
-                    const totalIncome = parseFloat(document.getElementById('totalIncome').value);
-                    const localAuthority = document.getElementById('localAuthority').value;
-                    const accommodationType = document.getElementById('accommodationType').value;
-                    const rentInput = parseFloat(document.getElementById('rent').value);
-                    const groceriesInput = parseFloat(document.getElementById('groceries').value);
-                    const transportInput = parseFloat(document.getElementById('transport').value);
-                    const otherCostsInput = parseFloat(document.getElementById('otherCosts').value);
+            document.getElementById('submitButton').addEventListener('click', function() {
+                const totalIncome = parseFloat(document.getElementById('totalIncome').value);
+                const localAuthority = document.getElementById('localAuthority').value;
+                const accommodationType = document.getElementById('accommodationType').value;
+                const rentInput = parseFloat(document.getElementById('rent').value);
+                const groceriesInput = parseFloat(document.getElementById('groceries').value);
+                const transportInput = parseFloat(document.getElementById('transport').value);
+                const otherCostsInput = parseFloat(document.getElementById('otherCosts').value);
 
-                    let accommodationKey = accommodationType.replace(" ", "");
-                    if(accommodationType === "One Bedroom") accommodationKey = "One Bedroom";
-                    if(accommodationType === "Two Bedrooms") accommodationKey = "Two Bedrooms";
+                let accommodationKey = accommodationType.replace(" ", "");
+                if(accommodationType === "One Bedroom") accommodationKey = "One Bedroom";
+                if(accommodationType === "Two Bedrooms") accommodationKey = "Two Bedrooms";
 
-                    const selectedData = data.find(data => data.Area === localAuthority);
-                    if(selectedData && selectedData[accommodationKey] !== undefined && selectedData[accommodationKey] !== ".") {
-                        const referenceRent = parseFloat(selectedData[accommodationKey]);
-                        const difference = rentInput - referenceRent;
-                        const percentageDifference = ((difference / referenceRent) * 100).toFixed(2);
+                const selectedData = data.find(data => data.Area === localAuthority);
+                if(selectedData && selectedData[accommodationKey] !== undefined && selectedData[accommodationKey] !== ".") {
+                    const referenceRent = parseFloat(selectedData[accommodationKey]);
+                    const difference = rentInput - referenceRent;
+                    const percentageDifference = ((difference / referenceRent) * 100).toFixed(2);
 
-                        let statusClass = difference > 0 ? 'plus' : 'minus';
-                        let prefix = difference > 0 ? '+' : '-';
-                        document.getElementById('results').innerHTML = `Your spending on rent is <span class="${statusClass}">${prefix}${Math.abs(percentageDifference)}%</span> compared to the reference amount of £${referenceRent}.`;
-                    } else {
-                        document.getElementById('results').innerHTML = `Reference amount not available for the selected options.`;
-                    }
+                    let statusClass = difference > 0 ? 'plus' : 'minus';
+                    let prefix = difference > 0 ? '+' : '-';
+                    document.getElementById('results').innerHTML = `Your spending on rent is <span class="${statusClass}">${prefix}${Math.abs(percentageDifference)}%</span> compared to the reference amount of £${referenceRent}.`;
+                } else {
+                    document.getElementById('results').innerHTML = `Reference amount not available for the selected options.`;
+                }
 
-                    const referenceGroceries = 235; // Reference amount for groceries
-                    const differenceGroceries = groceriesInput - referenceGroceries;
-                    const percentageDifferenceGroceries = ((differenceGroceries / referenceGroceries) * 100).toFixed(2);
+                const referenceGroceries = 235; // Reference amount for groceries
+                const differenceGroceries = groceriesInput - referenceGroceries;
+                const percentageDifferenceGroceries = ((differenceGroceries / referenceGroceries) * 100).toFixed(2);
 
-                    let statusClassGroceries = differenceGroceries > 0 ? 'plus' : 'minus';
-                    let prefixGroceries = differenceGroceries > 0 ? '+' : '-';
-                    document.getElementById('results').innerHTML += `<br>Your spending on groceries is <span class="${statusClassGroceries}">${prefixGroceries}${Math.abs(percentageDifferenceGroceries)}%</span> compared to the reference amount of £${referenceGroceries}.`;
+                let statusClassGroceries = differenceGroceries > 0 ? 'plus' : 'minus';
+                let prefixGroceries = differenceGroceries > 0 ? '+' : '-';
+                document.getElementById('results').innerHTML += `<br>Your spending on groceries is <span class="${statusClassGroceries}">${prefixGroceries}${Math.abs(percentageDifferenceGroceries)}%</span> compared to the reference amount of £${referenceGroceries}.`;
 
-                    const referenceTransport = 265.5; // Reference amount for transport
-                    const differenceTransport = transportInput - referenceTransport;
-                    const percentageDifferenceTransport = ((differenceTransport / referenceTransport) * 100).toFixed(2);
+                const referenceTransport = 265.5; // Reference amount for transport
+                const differenceTransport = transportInput - referenceTransport;
+                const percentageDifferenceTransport = ((differenceTransport / referenceTransport) * 100).toFixed(2);
 
-                    let statusClassTransport = differenceTransport > 0 ? 'plus' : 'minus';
-                    let prefixTransport = differenceTransport > 0 ? '+' : '-';
-                    document.getElementById('results').innerHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
+                let statusClassTransport = differenceTransport > 0 ? 'plus' : 'minus';
+                let prefixTransport = differenceTransport > 0 ? '+' : '-';
+                document.getElementById('results').innerHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
 
-                    document.getElementById('results').innerHTML += `<br>Your other costs are £${otherCostsInput}.`;
+                document.getElementById('results').innerHTML += `<br>Your other costs are £${otherCostsInput}.`;
 
-                    const totalMonthlySpending = rentInput + groceriesInput + transportInput + otherCostsInput;
-                    document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
+                const totalMonthlySpending = rentInput + groceriesInput + transportInput + otherCostsInput;
+                document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
 
-                    const remainingIncome = totalIncome - totalMonthlySpending;
-                    let remainingIncomeColor;
-                    const incomePercentage = ((remainingIncome / totalIncome) * 100).toFixed(2);
-                    if (incomePercentage < 0) {
-                        remainingIncomeColor = 'red';
-                    } else if (incomePercentage <= 10) {
-                        remainingIncomeColor = 'orange';
-                    } else {
-                        remainingIncomeColor = 'green';
-                    }
-                    document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
-                });
-            })
-            .catch(error => console.error('Error fetching JSON:', error));
+                const remainingIncome = totalIncome - totalMonthlySpending;
+                let remainingIncomeColor;
+                const incomePercentage = ((remainingIncome / totalIncome) * 100).toFixed(2);
+                if (incomePercentage < 0) {
+                    remainingIncomeColor = 'red';
+                } else if (incomePercentage <= 10) {
+                    remainingIncomeColor = 'orange';
+                } else {
+                    remainingIncomeColor = 'green';
+                }
+                document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
+
+                // Provide feedback based on the user input
+                const allGreen = document.querySelectorAll('.green').length === 4; // Assuming there are 4 green sections
+                if (allGreen) {
+                    document.getElementById('results').innerHTML += `<br>Based on the supplied figures, your budget is in check. Your costs are less than your income and you have at least 10% of saved income.`;
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching JSON:', error));
     </script>
 </body>
 </html>
