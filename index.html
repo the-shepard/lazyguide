@@ -131,6 +131,9 @@
                     document.getElementById('results').innerHTML += `<br>Your spending on transport is <span class="${statusClassTransport}">${prefixTransport}${Math.abs(percentageDifferenceTransport)}%</span> compared to the reference amount of £${referenceTransport}.`;
 
                     document.getElementById('results').innerHTML += `<br>Your other costs are £${otherCostsInput}.`;
+
+                    const totalMonthlySpending = rentInput + groceriesInput + transportInput + otherCostsInput;
+                    document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
