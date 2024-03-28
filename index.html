@@ -41,12 +41,21 @@
         .minus {
             color: green;
         }
+        .yellow {
+            color: yellow;
+        }
+        .green {
+            color: green;
+        }
+        .red {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>LazyGuide - A financial guidance tool for young adults in London by Sharif Ahmed</h1>
     <p>Question 0:</p>
-    <p>What is your total monthly income? (£) (including student loans)</p>
+    <p>What is your total monthly income? (£) (including student loans)(£)</p>
     <input type="number" id="totalIncome" name="totalIncome">
     <p>Question 1:</p> 
     <p>Please choose your Local Authority and Accommodation Type:</p>
@@ -140,7 +149,16 @@
                     document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
 
                     const remainingIncome = totalIncome - totalMonthlySpending;
-                    document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is £${remainingIncome.toFixed(2)}.`;
+                    let remainingIncomeColor;
+                    const incomePercentage = ((remainingIncome / totalIncome) * 100).toFixed(2);
+                    if (incomePercentage < 0) {
+                        remainingIncomeColor = 'red';
+                    } else if (incomePercentage <= 10) {
+                        remainingIncomeColor = 'yellow';
+                    } else {
+                        remainingIncomeColor = 'green';
+                    }
+                    document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
