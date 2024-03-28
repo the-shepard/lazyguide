@@ -111,10 +111,13 @@
                     const otherCostsInput = parseFloat(document.getElementById('otherCosts').value);
 
                     let accommodationKey = accommodationType.replace(" ", "");
-                    if(accommodationType === "One Bedroom") accommodationKey = "One Bedroom";
-                    if(accommodationType === "Two Bedrooms") accommodationKey = "Two Bedrooms";
+                    if(accommodationType === "One Bedroom") accommodationKey = "OneBedroom";
+                    if(accommodationType === "Two Bedrooms") accommodationKey = "TwoBedrooms";
 
                     const selectedData = data.find(data => data.Area === localAuthority);
+                    let feedbackMessage = '';
+                    let budgetInCheck = true;
+
                     if(selectedData && selectedData[accommodationKey] !== undefined && selectedData[accommodationKey] !== ".") {
                         const referenceRent = parseFloat(selectedData[accommodationKey]);
                         const difference = rentInput - referenceRent;
@@ -122,13 +125,16 @@
 
                         let statusClass = difference > 0 ? 'plus' : 'minus';
                         let prefix = difference > 0 ? '+' : '-';
+                        if (difference > 0) budgetInCheck = false;
                         document.getElementById('results').innerHTML = `Your spending on rent is <span class="${statusClass}">${prefix}${Math.abs(percentageDifference)}%</span> compared to the reference amount of £${referenceRent}.`;
                     } else {
                         document.getElementById('results').innerHTML = `Reference amount not available for the selected options.`;
+                        budgetInCheck = false;
                     }
 
                     const referenceGroceries = 235; // Reference amount for groceries
                     const differenceGroceries = groceriesInput - referenceGroceries;
+                    if (differenceGroceries > 0) budgetInCheck = false;
                     const percentageDifferenceGroceries = ((differenceGroceries / referenceGroceries) * 100).toFixed(2);
 
                     let statusClassGroceries = differenceGroceries > 0 ? 'plus' : 'minus';
@@ -137,6 +143,7 @@
 
                     const referenceTransport = 265.5; // Reference amount for transport
                     const differenceTransport = transportInput - referenceTransport;
+                    if (differenceTransport > 0) budgetInCheck = false;
                     const percentageDifferenceTransport = ((differenceTransport / referenceTransport) * 100).toFixed(2);
 
                     let statusClassTransport = differenceTransport > 0 ? 'plus' : 'minus';
@@ -146,24 +153,28 @@
                     document.getElementById('results').innerHTML += `<br>Your other costs are £${otherCostsInput}.`;
 
                     const totalMonthlySpending = rentInput + groceriesInput + transportInput + otherCostsInput;
-                    document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
-
                     const remainingIncome = totalIncome - totalMonthlySpending;
                     let remainingIncomeColor;
                     const incomePercentage = ((remainingIncome / totalIncome) * 100).toFixed(2);
                     if (incomePercentage < 0) {
                         remainingIncomeColor = 'red';
+                        budgetInCheck = false;
                     } else if (incomePercentage <= 10) {
                         remainingIncomeColor = 'orange';
+                        budgetInCheck = false;
                     } else {
                         remainingIncomeColor = 'green';
                     }
+                    document.getElementById('results').innerHTML += `<br>Your total monthly spending is £${totalMonthlySpending.toFixed(2)}.`;
                     document.getElementById('results').innerHTML += `<br>Your remaining income after expenses is <span class="${remainingIncomeColor}">£${remainingIncome.toFixed(2)}</span>.`;
 
-                    // Feedback based on the supplied figures
-                    if (difference < 0 && differenceGroceries < 0 && differenceTransport < 0 && incomePercentage > 10) {
-                        document.getElementById('results').innerHTML += "<br>Based on the supplied figures, your budget is in check. Your costs are less than your income and you have at least 10% of income saved.";
+                    // Adding the budget feedback based on user's inputs
+                    if (budgetInCheck) {
+                        feedbackMessage = 'Based on the supplied figures, your budget is in check. Your costs are less than your income, and you have at least 10% of your income saved.';
+                    } else {
+                        feedbackMessage = 'It looks like your expenses might be putting your budget at risk. Consider reviewing your spending or finding ways to increase your income.';
                     }
+                    document.getElementById('results').innerHTML += `<br><br>${feedbackMessage}`;
                 });
             })
             .catch(error => console.error('Error fetching JSON:', error));
